@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pac-Man Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            background-color: black;
+        }
+
+        canvas {
+            background-color: black;
+            border: 2px solid yellow;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .controls button {
+            width: 50px;
+            height: 50px;
+            font-size: 18px;
+            margin: 5px;
+            border-radius: 10px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-gap: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    
+    <!-- Botões de controle para mobile -->
+    <div class="controls">
+        <div class="grid">
+            <button onclick="move('up')">⬆️</button>
+            <button onclick="move('left')">⬅️</button>
+            <button onclick="move('down')">⬇️</button>
+            <button onclick="move('right')">➡️</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const pacman = {
+            x: 50,
+            y: 50,
+            size: 30,
+            speed: 5,
+            dx: 0,
+            dy: 0
+        };
+
+        function drawPacman() {
+            ctx.beginPath();
+            ctx.arc(pacman.x, pacman.y, pacman.size, 0.2 * Math.PI, 1.8 * Math.PI); // Boca do pacman
+            ctx.lineTo(pacman.x, pacman.y);
+            ctx.fillStyle = 'yellow';
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function updatePacmanPosition() {
+            pacman.x += pacman.dx;
+            pacman.y += pacman.dy;
+
+            // Limites do canvas
+            if (pacman.x - pacman.size < 0) pacman.x = pacman.size;
+            if (pacman.x + pacman.size > canvas.width) pacman.x = canvas.width - pacman.size;
+            if (pacman.y - pacman.size < 0) pacman.y = pacman.size;
+            if (pacman.y + pacman.size > canvas.height) pacman.y = canvas.height - pacman.size;
+        }
+
+        function move(direction) {
+            if (direction === 'up') {
+                pacman.dx = 0;
+                pacman.dy = -pacman.speed;
+            } else if (direction === 'down') {
+                pacman.dx = 0;
+                pacman.dy = pacman.speed;
+            } else if (direction === 'left') {
+                pacman.dx = -pacman.speed;
+                pacman.dy = 0;
+            } else if (direction === 'right') {
+                pacman.dx = pacman.speed;
+                pacman.dy = 0;
+            }
+        }
+
+        function update() {
+            clearCanvas();
+            drawPacman();
+            updatePacmanPosition();
+
+            requestAnimationFrame(update);
+        }
+
+        update(); // Inicia o jogo
+
+        // Controle por teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp') move('up');
+            if (e.key === 'ArrowDown') move('down');
+            if (e.key === 'ArrowLeft') move('left');
+            if (e.key === 'ArrowRight') move('right');
+        });
+    </script>
+
+</body>
+</html>
